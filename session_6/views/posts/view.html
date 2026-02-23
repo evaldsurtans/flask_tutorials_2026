@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+    </head>
+    <body>
+        <h1>{{ post.title }}</h1>
+        <p>
+            {{ post.body }}
+        </p>
+        <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
+            <input type="hidden" value="delete" name="button_type" />
+            <input type="submit" value="Delete" name="button_submit" />
+        </form>
+        <a href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
+
+    </body>
+</html>
