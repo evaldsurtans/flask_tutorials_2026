@@ -4,11 +4,9 @@ from flask import url_for
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
 
-
 app = flask.Flask(__name__, template_folder='views')
 app.register_blueprint(ControllerPosts.blueprint)
 
-# test
 
 
 @app.route("/", methods=['GET'])
@@ -22,7 +20,7 @@ def home():
         message = "Post edited"
 
     return flask.render_template(
-        'home_div.html',
+        'home.html',
         message=message,
         posts=posts
     )

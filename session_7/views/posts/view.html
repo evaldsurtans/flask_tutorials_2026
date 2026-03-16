@@ -1,0 +1,18 @@
+{% extends "layouts/base.html"%}
+
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+
+{% block content %}
+        <h1>{{ post.title }}</h1>
+        <p>
+            {{ post.body }}
+        </p>
+
+        <a class="button" href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
+         <form  action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
+            <input type="hidden" value="delete" name="button_type" />
+            <input class="button" type="submit" value="Delete" name="button_submit" />
+        </form>
+{% endblock %}

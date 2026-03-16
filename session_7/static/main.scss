@@ -1,0 +1,54 @@
+html {
+  font-family: "Noto Sans Gothic";
+}
+
+input, textarea {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    margin-bottom: 20px;
+}
+
+label, input, textarea {
+    display: block;
+}
+
+textarea {
+    height: 200px;
+}
+
+.div-contents {
+  > div {
+    > div:nth-child(3) {
+      width: 60px;
+    }
+
+    > div {
+      clear: both;
+    }
+  }
+  > .row {
+    > div {
+          background-color: #ddd;
+    border-color: gray;
+    border-width: 1px;
+    border-style: solid;
+    border-bottom-width: 0;
+    border-right-width: 0;
+    }
+
+    > div:last-child {
+      border-right-width: 1px;
+    }
+  }
+
+  > div:last-child {
+    > div {
+      border-bottom-width: 1px;
+    }
+  }
+
+  > .header {
+    font-weight: bold;
+  }
+}

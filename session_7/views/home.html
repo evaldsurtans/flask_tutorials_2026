@@ -1,24 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
-    <title>Homepage</title>
-</head>
-<body>
-    <!-- Jinja Flask templating language, write styles in css only (avoid inline styles) -->
+{% extends "layouts/base.html" %}
+{% block content %}
+    <!-- Jinja Flask templating language -->
     {% if message | length > 0  %}
         <div style="color: red;">{{ message }}</div>
     {% endif %}
 
     <div class="div-contents">
-        <div class="header">
+        <div class="div-header">
             <div>Title</div>
             <div>Updated</div>
             <div>Edit</div>
         </div>
         {% for post in posts %}
-            <div class="row">
+            <div class="div-row">
                 <div><a href="{{ url_for('posts.post_view', url_slug=post.url_slug) }}">{{ post.title }}</a></div>
                 <div>{{ post.modified }}</div>
                 <div><a href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a></div>
@@ -26,6 +20,5 @@
         {% endfor %}
     </div>
 
-    <a class="button" href="{{url_for('posts.post_edit')}}">Add new post</a>
-</body>
-</html>
+    <a class="div-button" href="{{url_for('posts.post_edit')}}">Add new post</a>
+{% endblock %}
