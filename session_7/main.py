@@ -7,7 +7,7 @@ from controllers.ControllerPosts import ControllerPosts
 app = flask.Flask(__name__, template_folder='views')
 app.register_blueprint(ControllerPosts.blueprint)
 
-
+# comment
 
 @app.route("/", methods=['GET'])
 def home():
