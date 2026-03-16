@@ -25,7 +25,7 @@ def home():
         posts=posts
     )
 
-app.run(
+app.run( #hello
     host='localhost', # localhost == 127.0.0.1
     port=8000, # by default HTTP 80, HTTPS 443 // 8000, 8080
     debug=True

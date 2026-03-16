@@ -2,7 +2,6 @@ import dataclasses
 
 from models.EnumPostStatus import EnumPostStatus
 
-
 @dataclasses.dataclass
 class ModelPost:
     post_id: int = 0
@@ -15,5 +14,5 @@ class ModelPost:
     status: EnumPostStatus = EnumPostStatus.not_set # ALT + ENTER
 
     parent_post_id: int = None
-    parent_post: ModelPost = None
+    parent_post = None
     children_posts = []
