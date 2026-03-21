@@ -73,15 +73,15 @@ class ControllerDatabase:
                         post.thumbnail_uuid,
                         post.status,
                         post.parent_post_id,
-                        post.parent_post,
-                        post.children_posts
+                        # post.parent_post,
+                        # post.children_posts
                     ) = col # pythonic wat to copy one by one variable from one tuple to another tuple
                 cursor.close()
 
                 # if post.parent_post_id is not None:
                 #     post.parent_post = ControllerDatabase.get_post(post_id=post.parent_post_id)
 
-                post.children_posts = ControllerDatabase.get_all_posts(parent_post_id=post.post_id)
+                # post.children_posts = ControllerDatabase.get_all_posts(parent_post_id=post.post_id)
 
         except Exception as exc:
             print(exc)
