@@ -9,6 +9,16 @@
         <p>
             {{ post.body }}
         </p>
+        <p>
+            {{ 'tags: ' ~ post.tags }}
+        </p>
+
+        {% if post.files %}
+            {% for file in post.files %}
+                <a href="{{url_for('posts.download_file', filename=file.strip())}}">Download {{file.strip()}}</a>
+                <br>
+            {% endfor %}
+        {% endif %}
 
         <a class="button" href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
          <form  action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">

@@ -12,7 +12,10 @@ class ModelPost:
     created: int = 0
     modified: int = 0
     status: EnumPostStatus = EnumPostStatus.not_set # ALT + ENTER
-
     parent_post_id: int = None
+    tags: str = ""
+    files: str = ""
+    owner_uuid: int = None
+
     parent_post = None
     children_posts = []
