@@ -1,5 +1,5 @@
 import flask
-from flask import request, redirect
+from flask import request, redirect, session, flash
 
 from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelUsers import ModelUser
@@ -28,3 +28,19 @@ class ControllerLogin:
         return flask.render_template(
             'auth/login.html'
         )
+
+    @staticmethod
+    @blueprint.route("/logout", methods=["POST"]) #redirect
+    def logout():
+        try:
+            token = session.get('session_token')
+
+            if not ControllerDatabase.logout(token):
+                print("devops help me")
+            session.clear()
+            flash('Successfully logged out')
+
+        except Exception as exc:
+            print(exc)
+
+        return redirect('/') #flask flash messages

@@ -180,4 +180,17 @@ class ControllerDatabase:
             print(exc)
         return is_success
 
+    @staticmethod
+    def logout(session_token: str = None) -> bool:
+        try:
+            with ControllerDatabase.__connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("UPDATE sessions SET is_active = 0 WHERE token = :token", {'token': session_token})
+            cursor.close()
+            return True
+
+        except Exception as exc:
+            print(exc)
+        return False
+
 

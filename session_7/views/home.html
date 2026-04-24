@@ -5,6 +5,15 @@
         <div style="color: red;">{{ message }}</div>
     {% endif %}
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div style="color: red;">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
     <div class="div-contents">
         <div class="div-header">
             <div>Title</div>
@@ -19,6 +28,10 @@
             </div>
         {% endfor %}
     </div>
+
+    <form action="{{url_for('auth.logout')}}" method="POST"> <!-- auth.logout instead of hardcoding /logout -->
+        <button type="submit">Logout</button>
+    </form>
 
     <a class="div-button" href="{{url_for('posts.post_edit')}}">Add new post</a>
 {% endblock %}
