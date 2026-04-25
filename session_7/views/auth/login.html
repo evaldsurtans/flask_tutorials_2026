@@ -6,7 +6,15 @@
 
 {% block content %}
 
-<form method="POST">
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div style="color: red;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="POST" action="">
   <label>Username</label>
   <input type="text" name="username" value="" />
 

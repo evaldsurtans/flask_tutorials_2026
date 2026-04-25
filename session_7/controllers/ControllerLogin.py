@@ -18,9 +18,14 @@ class ControllerLogin:
                 auth.password = request.form.get('password')
 
                 if auth.username and auth.password:
-                    if ControllerDatabase.login(auth):
-                        return redirect('/?login=1')
+                    token = ControllerDatabase.login(auth)
+                    if token:
+                        #session.clear() -- vai nepieciesams?
+                        session['session_token'] = token
+                        flash('Successfully logged in')
+                        return redirect('/')
 
+                flash('Invalid username or password')
 
         except Exception as exc:
             print(exc)

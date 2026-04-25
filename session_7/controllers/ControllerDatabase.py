@@ -154,31 +154,30 @@ class ControllerDatabase:
         return posts_flattened
 
     @staticmethod
-    def login(auth: ModelUser):
-        is_success: bool = False
-
+    def login(auth: ModelUser) -> str | None:
         try:
-            with UtilDatabaseCursor() as cursor:
-                col = cursor.execute("SELECT * FROM users WHERE username = :username LIMIT 1", {'username': auth.username}).fetchone()
+            with ControllerDatabase.__connection() as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                col = cursor.execute("SELECT * FROM users WHERE username = :username LIMIT 1", {'username': auth.username}).fetchone() #change with pass, bcrypt nepieciesams gensalt so what do I do
                 if col:
                     user = ModelUser()
-                    (user.uuid,
-                     user.username,
-                     user.password,
-                     user.session_token) = col
-                    if user.password == auth.password:
-                        session.clear()
-                        session['session_token'] = secrets.token_urlsafe(16)
-                        user.session_token = session.get('session_token')
-                        cursor.execute("UPDATE users SET session_token = :session_token WHERE uuid = :uuid",
-                                       {'session_token': user.session_token, 'uuid': user.uuid})
+                    user.__dict__.update(dict(col)) # user.username = "bob" --> user.__dict__['username'] = "bob"
 
-                        is_success = True
+                    if bcrypt.checkpw(auth.password.encode(), user.password.encode()): #bcrypt hashing
+                        expires_at = datetime.now() + timedelta(hours=1)
+
+                        user.session_token = secrets.token_hex(32)
+                        cursor.execute("INSERT INTO sessions (user_id, token, expires_at, is_active) VALUES (:user_id, :token, :expires_at, 1)",
+                                       {'user_id': user.uuid, 'token': user.session_token, 'expires_at': expires_at}
+                        )
+
+                        return user.session_token
             cursor.close()
 
         except Exception as exc:
             print(exc)
-        return is_success
+        return None
 
     @staticmethod
     def logout(session_token: str = None) -> bool:
