@@ -1,6 +1,7 @@
 import functools
 import flask, os
-from flask import request, redirect, url_for, current_app, send_from_directory
+from loguru import logger
+from flask import request, redirect, url_for, current_app, send_from_directory, session, flash
 from werkzeug.utils import secure_filename
 
 from controllers.ControllerDatabase import ControllerDatabase
@@ -13,6 +14,7 @@ class ControllerPosts:
     blueprint = flask.Blueprint("posts", __name__, url_prefix="/posts")
 
     @staticmethod
+    @logger.catch(reraise=True)
     @blueprint.route("/new", methods=["POST", "GET"])
     @blueprint.route("/edit/<post_id>", methods=["POST", "GET"])
     def post_edit(post_id=None):
@@ -67,12 +69,14 @@ class ControllerPosts:
         except Exception as exc:
             print(exc)
 
+    @logger.catch(reraise=True)
     @blueprint.route('/download/<filename>')
     def download_file(filename):
         uploads = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'])
         return send_from_directory(uploads, filename)
 
     @staticmethod
+    @logger.catch(reraise=True)
     @blueprint.route("/view/<url_slug>", methods=["GET"])
     def post_view(url_slug):
         post = ControllerDatabase.get_post(url_slug=url_slug)

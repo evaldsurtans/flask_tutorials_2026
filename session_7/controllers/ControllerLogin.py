@@ -1,5 +1,6 @@
 import flask
 from flask import request, redirect, session, flash
+from loguru import logger
 
 from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelUsers import ModelUser
@@ -8,6 +9,7 @@ class ControllerLogin:
     blueprint = flask.Blueprint('auth', __name__, url_prefix='/')
 
     @staticmethod
+    @logger.catch(reraise=True)
     @blueprint.route("/login", methods=["POST", "GET"])
     @blueprint.route("/register", methods=["POST", "GET"])
     def login():
@@ -35,6 +37,7 @@ class ControllerLogin:
         )
 
     @staticmethod
+    @logger.catch(reraise=True)
     @blueprint.route("/logout", methods=["POST"]) #redirect
     def logout():
         try:
