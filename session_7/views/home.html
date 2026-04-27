@@ -1,10 +1,6 @@
 {% extends "layouts/base.html" %}
 {% block content %}
     <!-- Jinja Flask templating language -->
-    {% if message | length > 0  %}
-        <div style="color: red;">{{ message }}</div>
-    {% endif %}
-
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
@@ -12,7 +8,6 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
 
     <div class="div-contents">
         <div class="div-header">
@@ -22,7 +17,7 @@
         </div>
         {% for post in posts %}
             <div class="div-row">
-                <div><a href="{{ url_for('posts.post_view', url_slug=post.url_slug) }}">{{ post.title }}</a></div>
+                <div><a href="{{ url_for('posts.post_view',post_id = post.post_id, url_slug=post.url_slug) }}">{{ post.title }}</a></div>
                 <div>{{ post.modified }}</div>
                 <div><a href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a></div>
             </div>
@@ -32,6 +27,10 @@
     <form action="{{url_for('auth.logout')}}" method="POST"> <!-- auth.logout instead of hardcoding /logout -->
         <button type="submit">Logout</button>
     </form>
+
+    <div class="div-button">
+        <a href="{{url_for('auth.login')}}">Login page</a>
+    </div>
 
     <a class="div-button" href="{{url_for('posts.post_edit')}}">Add new post</a>
 {% endblock %}

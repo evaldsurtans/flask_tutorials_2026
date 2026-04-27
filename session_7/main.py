@@ -5,11 +5,11 @@ from models.Database import Base, db
 from models.ModelUsers import ModelUser
 from models.ModelPost import ModelPost # init for safety measures I guess
 from models.ModelSession import ModelSession
+from models.ModelFile import ModelFile
 
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
 from controllers.ControllerLogin import ControllerLogin
-
 app = flask.Flask(__name__, template_folder='views')
 app.register_blueprint(ControllerPosts.blueprint)
 app.register_blueprint(ControllerLogin.blueprint)
@@ -42,26 +42,17 @@ werkzeug_logger.handlers = [InterceptHandler()]
 werkzeug_logger.propagate = False #avoid dublikati
 
 logger.remove()
-logger.add(sys.stdout, level="INFO", colorize=True)
+logger.add(sys.stdout, level="DEBUG", colorize=True)
 
 with app.app_context():
     Base.metadata.create_all(db.engine)
 
 @app.route("/", methods=['GET'])
 def home():
-    params_GET = flask.request.args
-    message = ""
     posts = ControllerDatabase.get_all_posts()
-    if params_GET.get("deleted"):
-        message = "Post deleted"
-    if params_GET.get("edited"):
-        message = "Post edited"
-    if params_GET.get("error"):
-        message = "An error occurred!"
 
     return flask.render_template(
         'home.html',
-        message=message,
         posts=posts
     )
 

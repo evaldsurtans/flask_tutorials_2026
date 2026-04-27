@@ -40,15 +40,12 @@ class ControllerLogin:
     @logger.catch(reraise=True)
     @blueprint.route("/logout", methods=["POST"]) #redirect
     def logout():
-        try:
-            token = session.get('session_token')
+        token = session.get('session_token')
+        session.clear()
 
-            if not ControllerDatabase.logout(token):
-                print("devops help me")
-            session.clear()
-            flash('Successfully logged out')
-
-        except Exception as exc:
-            print(exc)
+        if not ControllerDatabase.logout(token):
+            logger.log("WARNING", "Logout failed due to invalid token")
+            return redirect('/')
+        flash('Successfully logged out')
 
         return redirect('/') #flask flash messages

@@ -15,14 +15,17 @@
 
         {% if post.files %}
             {% for file in post.files %}
-                <a href="{{url_for('posts.download_file', filename=file.strip())}}">Download {{file.strip()}}</a>
+                <a href="{{url_for('posts.download_file', file_id=file.file_id)}}">Download {{file.filename}}</a>
                 <br>
             {% endfor %}
         {% endif %}
 
         <a class="button" href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
+
          <form  action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />
             <input class="button" type="submit" value="Delete" name="button_submit" />
         </form>
+
+        <a class="div-button" href="/">Homepage</a>
 {% endblock %}
