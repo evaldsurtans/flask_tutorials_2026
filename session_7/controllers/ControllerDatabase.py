@@ -9,7 +9,6 @@ from models.Database import db
 from sqlalchemy import select, delete
 
 from models.ModelUsers import ModelUser
-from utils.UtilDatabaseCursor import UtilDatabaseCursor
 
 
 class ControllerDatabase:
