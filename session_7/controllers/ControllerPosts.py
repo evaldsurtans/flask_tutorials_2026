@@ -5,7 +5,19 @@ from flask import request, redirect, url_for, current_app, send_from_directory, 
 from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelPost import ModelPost
 from utils.FileService import upload_file
+from functools import wraps
 
+def session_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs): # args passed variables, kwargs extra variables
+        current_session = session.get('session_token')
+        if not ControllerDatabase.verify_session(current_session):
+            flash("Please login first")
+            return redirect('/')
+
+        kwargs['current_session'] = current_session
+        return f(*args, **kwargs)
+    return wrapper
 
 class ControllerPosts: #flask middleware
     blueprint = flask.Blueprint("posts", __name__, url_prefix="/posts")
@@ -14,13 +26,9 @@ class ControllerPosts: #flask middleware
     @logger.catch(reraise=True)
     @blueprint.route("/new", methods=["POST", "GET"])
     @blueprint.route("/edit/<post_id>", methods=["POST", "GET"])
-    def post_edit(post_id=None):
+    @session_required
+    def post_edit(current_session, post_id=None):
         post = ModelPost()
-
-        current_session = session.get('session_token')
-        if not current_session:
-            flash("Please login first")
-            return redirect('/')
 
         logger.log("DEBUG", "Post ID: " + str(post_id))
 
@@ -52,9 +60,6 @@ class ControllerPosts: #flask middleware
 
             if post.url_slug == "" or post.url_slug is None:  # temporary fix
                 post.url_slug = post.title
-
-            current_session = session.get('session_token')
-            print(current_session)
 
             if post.title == "":
                 flash("Post title is required")

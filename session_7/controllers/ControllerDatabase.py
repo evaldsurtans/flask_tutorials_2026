@@ -4,7 +4,7 @@ from models.ModelFile import ModelFile
 from models.ModelSession import ModelSession
 from models.ModelPost import ModelPost
 import sqlite3, secrets, bcrypt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from models.Database import db
 from sqlalchemy import select, delete
 
@@ -113,6 +113,24 @@ class ControllerDatabase:
         posts_flattened = post_hierarchy
 
         return posts_flattened
+
+    @staticmethod
+    def verify_session(session_token: str = None) -> bool:
+        verified = False
+
+        if session_token:
+            token_query = select(ModelSession).where(ModelSession.token == session_token,
+                                                     ModelSession.is_active == True)
+            token : ModelSession = db.session.scalar(token_query)
+
+            if token.expires_at < datetime.now(timezone.utc):
+                token.is_active = False
+                db.session.merge(token)
+                return verified
+
+            verified = True
+
+        return verified
 
     @staticmethod
     def login(auth: ModelUser) -> str | None:
