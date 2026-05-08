@@ -6,22 +6,33 @@
 
 {% block content %}
 
-{% with messages = get_flashed_messages() %}
+<div class="flex flex-col w-full items-center justify-center mt-30">
+
+  {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
-      <div style="color: red;">{{ message }}</div>
+<div role="alert" class="alert alert-error fixed left-50% top-5">
+  <i class="fa-solid fa-exclamation"></i>
+  <span>{{message}}</span>
+</div>
     {% endfor %}
   {% endif %}
 {% endwith %}
 
-<form method="POST" action="">
-  <label>Username</label>
-  <input type="text" name="username" value="" />
+  <div class="card w-96 bg-base-100 card-xl shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">Login</h2>
+      <form class="flex flex-col" method="POST" action="">
+        <label for="user" class="font-semibold opacity-80">Username</label>
+        <input class="input input-secondary" id="user" type="text" name="username" placeholder="Enter username" value="" />
 
-  <label>Password</label>
-  <input type="password" name="password" value="" />
+        <label for="pass" class="font-semibold opacity-80 mt-4">Password</label>
+        <input class="input input-secondary" id="pass" type="password" name="password" placeholder="Enter password" value="" />
 
-   <input type="submit" value="Login" />
-</form>
+        <input class="btn btn-soft btn-secondary mt-4" type="submit" value="Login" />
+      </form>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

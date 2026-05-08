@@ -1,31 +1,41 @@
 {% extends "layouts/base.html"%}
 
 {% block title %}
-    {{ post.title }}
+{{ post.title }}
 {% endblock %}
 
 {% block content %}
-        <h1>{{ post.title }}</h1>
-        <p>
-            {{ post.body }}
-        </p>
-        <p>
-            {{ 'tags: ' ~ post.tags }}
-        </p>
 
-        {% if post.files %}
-            {% for file in post.files %}
-                <a href="{{url_for('posts.download_file', file_id=file.file_id)}}">Download {{file.filename}}</a>
-                <br>
-            {% endfor %}
-        {% endif %}
-
-        <a class="button" href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
-
-         <form  action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
-            <input type="hidden" value="delete" name="button_type" />
-            <input class="button" type="submit" value="Delete" name="button_submit" />
-        </form>
-
-        <a class="div-button" href="/">Homepage</a>
+<div class="flex flex-col w-full items-center justify-center mt-30">
+    <div class="card w-96 bg-base-100 card-xl shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title">{{post.title}}</h2>
+            <p class="text-xs font-semibold opacity-80">Tags: {{post.tags}}</p>
+            <p>{{post.body}}</p>
+            <hr class="rounded-xl">
+            {% if post.files %}
+            <ul class="list bg-base-100 rounded-box shadow-md h-fit">
+                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Attached files</li>
+                <li class="list-row !flex flex-col">
+                    {% for file in post.files %}
+                    <div class="flex items-center">
+                        <div class="kbd kbd-lg">{{file.filename}}</div>
+                        <a href="{{url_for('posts.download_file', file_id=file.file_id)}}" class="btn btn-square btn-ghost ml-5">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </li>
+            </ul>
+            {% endif %}
+            <div class="justify-end card-actions">
+                <a class="btn btn-soft btn-secondary" href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
+                <form  action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
+                    <button class="btn btn-soft btn-error" type="submit" value="delete">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-primary mt-4" href="/">Homepage</a>
+</div>
 {% endblock %}

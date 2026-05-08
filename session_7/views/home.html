@@ -1,36 +1,39 @@
 {% extends "layouts/base.html" %}
 {% block content %}
-    <!-- Jinja Flask templating language -->
+<!-- Jinja Flask templating language -->
+
+<div class="flex flex-col w-full items-center justify-center">
+
     {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div style="color: red;">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+    {% if messages %}
+    {% for message in messages %}
+    <div role="alert" class="alert alert-warning fixed left-50% top-5">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>{{message}}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
     {% endwith %}
 
-    <div class="div-contents">
-        <div class="div-header">
-            <div>Title</div>
-            <div>Updated</div>
-            <div>Edit</div>
-        </div>
+    <ul class="list bg-base-100 rounded-box shadow-md items-center mt-20">
         {% for post in posts %}
-            <div class="div-row">
-                <div><a href="{{ url_for('posts.post_view',post_id = post.post_id, url_slug=post.url_slug) }}">{{ post.title }}</a></div>
-                <div>{{ post.modified }}</div>
-                <div><a href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a></div>
+        <li class="list-row">
+            <div>
+                <div>{{post.title}}</div>
+                <div class="text-xs uppercase font-semibold opacity-60">Last modified: {{post.modified}}</div>
+                <div class="text-xs uppercase font-semibold opacity-60">Created: {{post.created}}</div>
             </div>
+            <a href="{{ url_for('posts.post_view',post_id = post.post_id, url_slug=post.url_slug) }}" class="btn btn-square btn-ghost">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+            <a href="{{url_for('posts.post_edit', post_id=post.post_id)}}" class="btn btn-square btn-ghost">
+                <i class="fa-solid fa-pen-clip"></i>
+            </a>
+        </li>
         {% endfor %}
+    </ul>
+    <div class="btn mt-4">
+        <a href="{{url_for('posts.post_edit')}}">Add new post</a>
     </div>
-
-    <form action="{{url_for('auth.logout')}}" method="POST"> <!-- auth.logout instead of hardcoding /logout -->
-        <button type="submit">Logout</button>
-    </form>
-
-    <div class="div-button">
-        <a href="{{url_for('auth.login')}}">Login page</a>
-    </div>
-
-    <a class="div-button" href="{{url_for('posts.post_edit')}}">Add new post</a>
+</div>
 {% endblock %}
