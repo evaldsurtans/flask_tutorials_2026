@@ -3,18 +3,19 @@ from loguru import logger
 from models.ModelFile import ModelFile
 from models.ModelSession import ModelSession
 from models.ModelPost import ModelPost
-import sqlite3, secrets, bcrypt
+import secrets, bcrypt
 from datetime import datetime, timedelta, timezone
 from models.Database import db
 from sqlalchemy import select, delete
 
+from models.ModelTags import ModelTags
 from models.ModelUsers import ModelUser
-
+from models.ModelPostTags import ModelPostTags
 
 class ControllerDatabase:
 
     @staticmethod
-    def insert_post(post: ModelPost, current_session, file_models : list[ModelFile] = None) -> int:
+    def insert_post(post: ModelPost, current_session, file_models : list[ModelFile] = None, tags: list = None) -> int:
         user_query = select(ModelSession).where(ModelSession.token == current_session)
         user = db.session.scalar(user_query)
 
@@ -26,12 +27,24 @@ class ControllerDatabase:
                     file_model.owner_id = user.user_id
                     post.files.append(file_model)
 
+            for tag in tags:
+                stmt = select(ModelTags).where(ModelTags.tag_name == tag)
+                existing_tag = db.session.scalar(stmt)
+
+                if existing_tag:
+                    link = ModelPostTags(tags=existing_tag)
+                    post.post_tags.append(link)
+                else:
+                    new_tag = ModelTags(tag_name=tag)
+                    new_link = ModelPostTags(tags=new_tag)
+                    post.post_tags.append(new_link)
+
         db.session.add(post)
         db.session.commit()
         return post.post_id
 
     @staticmethod
-    def update_post(post: ModelPost, current_session: str = None, file_models : list[ModelFile] = None) -> bool:
+    def update_post(post: ModelPost, current_session: str = None, file_models : list[ModelFile] = None, deleted_ids: list = None, tags: list = None) -> bool:
         is_success = False
 
         user_query = select(ModelSession).where(ModelSession.token == current_session)
@@ -39,10 +52,30 @@ class ControllerDatabase:
 
         # nested because scalar already started a transaction
         if user and user.user_id == post.owner_uuid:
+
+            post.post_tags.clear()
+            for tag in tags:
+                stmt = select(ModelTags).where(ModelTags.tag_name == tag)
+                existing_tag = db.session.scalar(stmt)
+
+                if existing_tag:
+                    link = ModelPostTags(tags=existing_tag)
+                    post.post_tags.append(link)
+                else:
+                    new_tag = ModelTags(tag_name=tag)
+                    new_link = ModelPostTags(tags=new_tag)
+                    post.post_tags.append(new_link)
+
             if file_models:
                 for file_model in file_models:
                     file_model.owner_id = user.user_id
                     post.files.append(file_model)
+
+            if deleted_ids:
+                stmt = select(ModelFile).where(ModelFile.file_id.in_(deleted_ids))
+                files = db.session.scalars(stmt)
+                for file in files:
+                    file.is_deleted = True
 
         db.session.merge(post)
         db.session.commit()
@@ -122,7 +155,7 @@ class ControllerDatabase:
                                                      ModelSession.is_active == True)
             token : ModelSession = db.session.scalar(token_query)
 
-            if token.expires_at < datetime.now(timezone.utc):
+            if token.expires_at < datetime.now():
                 token.is_active = False
                 db.session.merge(token)
                 return verified

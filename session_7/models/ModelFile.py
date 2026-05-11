@@ -1,7 +1,7 @@
 from models.Database import Base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
-from sqlalchemy import String, ForeignKey, Text, JSON
+from sqlalchemy import String, ForeignKey
 from datetime import datetime
 
 class ModelFile(Base):
@@ -14,6 +14,7 @@ class ModelFile(Base):
     storage_path: Mapped[str] = mapped_column(String(255))
     upload_date: Mapped[datetime] = mapped_column(default=func.now())
     post_id: Mapped[int | None] = mapped_column(ForeignKey("posts.post_id"))
+    is_deleted: Mapped[bool] = mapped_column(default=False)
 
     users: Mapped["ModelUser"] = relationship(back_populates="files")
     posts: Mapped["ModelPost"] = relationship(back_populates="files")

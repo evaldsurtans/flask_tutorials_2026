@@ -56,7 +56,7 @@ class ControllerPosts: #flask middleware
             post.title = request.form.get('post_title').strip()
             post.body = request.form.get('post_body').strip()
             post.url_slug = request.form.get('url_slug').strip()
-            post.tags = request.form.get('tags').strip()
+            tags = request.form.getlist('tag')
 
             if post.url_slug == "" or post.url_slug is None:  # temporary fix
                 post.url_slug = post.title
@@ -65,22 +65,25 @@ class ControllerPosts: #flask middleware
                 flash("Post title is required")
                 return redirect(url_for('home'))
 
-            files = request.files.getlist("files")
-            files = [f for f in files if f.filename]
+            deleted_file_id = request.form.getlist('deleted_id')
+            logger.log("CRITICAL", deleted_file_id)
 
-            if files:
-                file_models = upload_file(files) # if files else []
+            uploadedfiles = request.files.getlist("files")
+            uploadedfiles = [f for f in uploadedfiles if f.filename]
+
+            if uploadedfiles:
+                file_models = upload_file(uploadedfiles) # if files else []
                 logger.log("CRITICAL","files!!!")
 
             if post.post_id is not None:
-                if ControllerDatabase.update_post(post, current_session, file_models):
+                if ControllerDatabase.update_post(post, current_session, file_models, deleted_file_id, tags):
                     flash(f"Post edited= {post.url_slug}")
                     return redirect(url_for('home'))
                 else:
                     flash(f"Error happened= {post.url_slug}")
                     return redirect(url_for('home'))
             else:
-                post_id = ControllerDatabase.insert_post(post, current_session, file_models)
+                post_id = ControllerDatabase.insert_post(post, current_session, file_models, tags)
                 return redirect(url_for('posts.post_view', post_id=post_id, url_slug=post.url_slug))
 
 

@@ -29,14 +29,45 @@ New post
                 <label for="body" class="font-semibold opacity-80 mt-4">Body</label>
                 <textarea name="post_body" id="body" placeholder="Secondary" class="textarea textarea-secondary">{{post.body}}</textarea>
 
-                <label for="tags" class="font-semibold opacity-80 mt-4">Tags</label>
-                <input name="tags" value="{{post.tags}}" id="tags" type="text" placeholder="Tags" class="input input-secondary" />
-
                 <label for="urlslug" class="font-semibold opacity-80 mt-4">Url slug</label>
                 <input name="url_slug" value="{{post.url_slug}}" id="urlslug" type="text" placeholder="Url slug" class="input input-secondary" />
 
+                {% if post.files %}
+                <ul class="list bg-base-100 rounded-box shadow-md h-fit mt-4">
+                    <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Attached files</li>
+                    <li class="list-row !flex flex-col">
+                        {% for file in post.files %}
+                        {% if file.is_deleted != True %}
+                        <div class="flex items-center">
+                            <div class="kbd kbd-lg">{{file.filename}}</div>
+                            <button data-id="{{file.file_id}}" type="button" onclick="deleteElement(this)" class="btn btn-square btn-ghost ml-5">
+                                <i class="fa-solid fa-trash-arrow-up"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </li>
+                </ul>
+                {% endif %}
+
                 <label for="files" class="font-semibold opacity-80 mt-4">Upload files</label>
                 <input name="files" id="files" type="file" class="file-input file-input-primary" multiple/>
+
+                <ul class="list bg-base-100 rounded-box shadow-md h-fit mt-4">
+                    <li>
+                        <label for="tagInput" class="font-semibold opacity-80">Tags</label>
+                        <input id="tagInput" type="text" placeholder="Enter tag name" class="input input-primary rounded-xl"/>
+                    </li>
+                    <li id="taglist">
+                        {% for name in post.tag_names %}
+                            <button data-tag="{{name}}" type="button" class="kbd" onclick="deleteTag(this)">
+                                {{name}}
+                                <i class="fa-solid fa-trash-arrow-up"></i>
+                                <input type="hidden" name="tag" value="{{name}}">
+                            </button>
+                        {% endfor %}
+                    </li>
+                </ul>
 
                 <input class="btn btn-soft btn-secondary capitalize mt-4" type="submit" name="button_type" value="save"/>
                 <input class="btn btn-soft btn-error capitalize mt-1" type="submit" name="button_type" value="delete" />
@@ -45,4 +76,72 @@ New post
     </div>
     <a class="btn btn-primary mt-4" href="/">Cancel</a>
 </div>
+
+<script>
+    function deleteElement(btn) {
+        if (btn.parentElement.parentElement.children.length === 1) {
+            btn.parentElement.parentElement.parentElement.style.display = "none";
+        }
+        btn.parentElement.remove()
+
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "deleted_id"
+        input.value = btn.dataset.id;
+
+        document.getElementById("body").parentElement.appendChild(input); // tizls veids, ik
+    }
+
+    function deleteTag(btn) {
+        const tags = document.querySelectorAll('input[name="tag"]')
+        for (const tag of tags) {
+            if (tag.value === btn.dataset.tag) {
+                tag.remove();
+                btn.remove();
+                return;
+            }
+        }
+    }
+
+    const input = document.getElementById("tagInput");
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+
+            if (input.value !== "") {
+                const tags = document.querySelectorAll('input[name="tag"]')
+                for (const tag of tags) {
+                    if (tag.value === input.value) {
+                        input.value = "";
+                        return
+                    }
+                }
+
+                let hidden = document.createElement("input");
+                let buttonTag = document.createElement("Button");
+                let icon = document.createElement("i");
+                const list = document.getElementById("taglist");
+
+                hidden.type = "hidden";
+                hidden.name = "tag";
+                hidden.value = input.value.trim();
+
+                icon.className = "fa-solid fa-trash-arrow-up";
+
+                buttonTag.className = "kbd";
+                buttonTag.type = "button";
+                buttonTag.dataset.tag = input.value;
+                buttonTag.onclick = function() { deleteTag(this); }
+                buttonTag.textContent = input.value;
+
+                buttonTag.appendChild(icon);
+                buttonTag.appendChild(hidden)
+                list.appendChild(buttonTag)
+
+            }
+            input.value = "";
+        }
+    })
+</script>
+
 {% endblock %}

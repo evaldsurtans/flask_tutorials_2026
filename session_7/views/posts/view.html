@@ -10,7 +10,6 @@
     <div class="card w-96 bg-base-100 card-xl shadow-sm">
         <div class="card-body">
             <h2 class="card-title">{{post.title}}</h2>
-            <p class="text-xs font-semibold opacity-80">Tags: {{post.tags}}</p>
             <p>{{post.body}}</p>
             <hr class="rounded-xl">
             {% if post.files %}
@@ -18,16 +17,29 @@
                 <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Attached files</li>
                 <li class="list-row !flex flex-col">
                     {% for file in post.files %}
+                    {% if file.is_deleted != True %}
                     <div class="flex items-center">
                         <div class="kbd kbd-lg">{{file.filename}}</div>
                         <a href="{{url_for('posts.download_file', file_id=file.file_id)}}" class="btn btn-square btn-ghost ml-5">
                             <i class="fa-solid fa-arrow-down"></i>
                         </a>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </li>
             </ul>
             {% endif %}
+
+            <ul class="list bg-base-100 rounded-box h-fit mt-4">
+                <li id="taglist">
+                    {% for name in post.tag_names %}
+                    <button type="button" class="kbd">
+                        {{name}}
+                    </button>
+                    {% endfor %}
+                </li>
+            </ul>
+
             <div class="justify-end card-actions">
                 <a class="btn btn-soft btn-secondary" href="{{url_for('posts.post_edit', post_id=post.post_id)}}">Edit</a>
                 <form  action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">

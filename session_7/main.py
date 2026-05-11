@@ -6,6 +6,8 @@ from models.ModelUsers import ModelUser
 from models.ModelPost import ModelPost # init for safety measures I guess
 from models.ModelSession import ModelSession
 from models.ModelFile import ModelFile
+from models.ModelTags import ModelTags
+from models.ModelPostTags import ModelPostTags
 
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
@@ -47,6 +49,7 @@ logger.add(sys.stdout, level="DEBUG", colorize=True)
 with app.app_context():
     Base.metadata.create_all(db.engine)
 
+@logger.catch(reraise=True)
 @app.route("/", methods=['GET'])
 def home():
     posts = ControllerDatabase.get_all_posts()
@@ -59,6 +62,6 @@ def home():
 app.run( #hello
     host='localhost', # localhost == 127.0.0.1
     port=8000, # by default HTTP 80, HTTPS 443 // 8000, 8080
-    debug=False,
+    debug=True,
     use_reloader=True
 )
