@@ -9,12 +9,14 @@ from models.ModelFile import ModelFile
 from models.ModelTags import ModelTags
 from models.ModelPostTags import ModelPostTags
 
+from controllers.ControllerTags import ControllerTags
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
-from controllers.ControllerLogin import ControllerLogin
+from controllers.ControllerAuth import ControllerLogin
 app = flask.Flask(__name__, template_folder='views')
 app.register_blueprint(ControllerPosts.blueprint)
 app.register_blueprint(ControllerLogin.blueprint)
+app.register_blueprint(ControllerTags.blueprint)
 
 app.secret_key = 'e6245cf83a39d4632edcaab284334f4fd6b73abccb1e4b8acf24a20eef3ad651' #atslega sha256
 app.config["UPLOAD_FOLDER"] = "Uploads"

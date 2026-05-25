@@ -24,6 +24,12 @@
                 {% else %}
                 <li><a href="{{url_for('auth.login')}}">Login</a></li>
                 {% endif %}
+                <li>
+                    <a href="{{url_for('home')}}">Posts</a>
+                </li>
+                <li>
+                    <a href="{{url_for('tags.view_tags')}}">Tags</a>
+                </li>
             </ul>
         </div>
     </div>

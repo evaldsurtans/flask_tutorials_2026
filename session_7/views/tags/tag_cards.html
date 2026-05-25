@@ -1,0 +1,8 @@
+{% for tag in tags %}
+<div class="card w-96 bg-base-100 card-md shadow-sm">
+    <div class="card-body">
+        <h2 class="card-title">{{ tag.tag_name }}</h2>
+        <p>Created: {{ tag.created }}</p>
+    </div>
+</div>
+{% endfor %}

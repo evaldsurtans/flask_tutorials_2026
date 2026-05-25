@@ -10,5 +10,8 @@ class ModelTags(Base):
 
     tag_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tag_name: Mapped[str] = mapped_column(String(255))
+    created: Mapped[datetime] = mapped_column(default=func.now())
+    owner_uuid: Mapped[int] = mapped_column(ForeignKey("users.uuid"))
 
     post_tags: Mapped[list["ModelPostTags"]] = relationship(back_populates="tags")
+    users: Mapped["ModelUser"] = relationship(back_populates="tags")

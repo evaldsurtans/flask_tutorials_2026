@@ -15,3 +15,4 @@ class ModelUser(Base):
     files: Mapped[List["ModelFile"]] = relationship(back_populates="users")
     posts: Mapped[List["ModelPost"]] = relationship(back_populates="users")
     sessions: Mapped[List["ModelSession"]] = relationship(back_populates="users")
+    tags: Mapped[List["ModelTags"]] = relationship(back_populates="users")

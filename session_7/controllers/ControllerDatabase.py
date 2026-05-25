@@ -1,4 +1,5 @@
 from loguru import logger
+from sqlalchemy.sql.operators import contains
 
 from models.ModelFile import ModelFile
 from models.ModelSession import ModelSession
@@ -36,6 +37,7 @@ class ControllerDatabase:
                     post.post_tags.append(link)
                 else:
                     new_tag = ModelTags(tag_name=tag)
+                    new_tag.owner_uuid = user.user_id
                     new_link = ModelPostTags(tags=new_tag)
                     post.post_tags.append(new_link)
 
@@ -63,6 +65,7 @@ class ControllerDatabase:
                     post.post_tags.append(link)
                 else:
                     new_tag = ModelTags(tag_name=tag)
+                    new_tag.owner_uuid = user.user_id
                     new_link = ModelPostTags(tags=new_tag)
                     post.post_tags.append(new_link)
 
@@ -193,5 +196,16 @@ class ControllerDatabase:
                 return True
 
         return False
+
+    @staticmethod
+    def get_all_tags(query_filter : str = None, query_tab : str = None) -> list:
+        with db.session.begin():
+            tags_query = select(ModelTags).limit(20)
+            if query_filter:
+                tags_query = select(ModelTags).limit(20).filter(ModelTags.tag_name.contains(query_filter))
+                print("has")
+
+            tags = db.session.scalars(tags_query)
+            return tags
 
 

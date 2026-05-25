@@ -45,7 +45,6 @@ class ControllerLogin:
 
         if not ControllerDatabase.logout(token):
             logger.log("WARNING", "Logout failed due to invalid token")
-            return redirect('/')
-        flash('Successfully logged out')
-
-        return redirect('/') #flask flash messages
+        else:
+            logger.log("INFO", "Logout successful")
+        return redirect('/')
