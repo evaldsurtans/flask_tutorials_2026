@@ -23,7 +23,7 @@ class ModelPost(Base):
 
     users: Mapped["ModelUser"] = relationship(back_populates="posts")
     files: Mapped[list["ModelFile"]] = relationship(back_populates="posts")
-    post_tags: Mapped[list["ModelPostTags"]] = relationship(back_populates="posts", cascade="all, delete-orphan")
+    post_tags: Mapped[list["ModelTagsInPost"]] = relationship(back_populates="posts", cascade="all, delete-orphan")
     tag_names: AssociationProxy[list[str]] = association_proxy("post_tags", "tag_name_attr")
 
     def __init__(self):

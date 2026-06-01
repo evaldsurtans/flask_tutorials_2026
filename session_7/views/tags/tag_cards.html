@@ -3,6 +3,9 @@
     <div class="card-body">
         <h2 class="card-title">{{ tag.tag_name }}</h2>
         <p>Created: {{ tag.created }}</p>
+        <a href="{{url_for('tags.edit_tags', tag_id=tag.tag_id)}}" class="btn btn-square btn-ghost">
+            <i class="fa-solid fa-pen-clip"></i>
+        </a>
     </div>
 </div>
 {% endfor %}

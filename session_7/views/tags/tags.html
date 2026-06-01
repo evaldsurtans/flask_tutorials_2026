@@ -21,7 +21,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios@1.16.1/dist/axios.min.js"></script>
 <script>
     const api = axios.create({
-            baseURL: "http://localhost:8000/tags"
+            baseURL: "http://localhost:8000/tags" //hardcoded, use async (.then)
         });
 
     function searchTags(input) {

@@ -11,7 +11,7 @@ from sqlalchemy import select, delete
 
 from models.ModelTags import ModelTags
 from models.ModelUsers import ModelUser
-from models.ModelPostTags import ModelPostTags
+from models.ModelTagsInPost import ModelTagsInPost
 
 class ControllerDatabase:
 
@@ -33,12 +33,12 @@ class ControllerDatabase:
                 existing_tag = db.session.scalar(stmt)
 
                 if existing_tag:
-                    link = ModelPostTags(tags=existing_tag)
+                    link = ModelTagsInPost(tags=existing_tag)
                     post.post_tags.append(link)
                 else:
                     new_tag = ModelTags(tag_name=tag)
                     new_tag.owner_uuid = user.user_id
-                    new_link = ModelPostTags(tags=new_tag)
+                    new_link = ModelTagsInPost(tags=new_tag)
                     post.post_tags.append(new_link)
 
         db.session.add(post)
@@ -61,12 +61,12 @@ class ControllerDatabase:
                 existing_tag = db.session.scalar(stmt)
 
                 if existing_tag:
-                    link = ModelPostTags(tags=existing_tag)
+                    link = ModelTagsInPost(tags=existing_tag)
                     post.post_tags.append(link)
                 else:
                     new_tag = ModelTags(tag_name=tag)
                     new_tag.owner_uuid = user.user_id
-                    new_link = ModelPostTags(tags=new_tag)
+                    new_link = ModelTagsInPost(tags=new_tag)
                     post.post_tags.append(new_link)
 
             if file_models:
@@ -208,4 +208,35 @@ class ControllerDatabase:
             tags = db.session.scalars(tags_query)
             return tags
 
+    @staticmethod
+    def get_tag(tag_id : int = None) -> ModelTags:
+        tag_query = select(ModelTags).where(ModelTags.tag_id == tag_id)
+        tag = db.session.scalar(tag_query)
+        return tag
+
+    @staticmethod
+    def delete_tag(tag : ModelTags = None, current_session = None):
+        is_success = False
+        user_query = select(ModelSession).where(ModelSession.token == current_session)
+        user = db.session.scalar(user_query)
+
+        if user and user.user_id == tag.owner_uuid:
+            stmt = delete(ModelTags).where(ModelTags.tag_id == tag.tag_id)
+            db.session.execute(stmt)
+            db.session.commit()
+            is_success = True
+
+        return is_success
+
+    @staticmethod
+    def edit_tag(tag : ModelTags = None, current_session = None):
+        is_success = False
+        user_query = select(ModelSession).where(ModelSession.token == current_session)
+        user = db.session.scalar(user_query)
+
+        if user and user.user_id == tag.owner_uuid:
+            db.session.merge(tag)
+            db.session.commit()
+            is_success = True
+        return is_success
 

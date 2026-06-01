@@ -7,7 +7,7 @@ from models.ModelPost import ModelPost # init for safety measures I guess
 from models.ModelSession import ModelSession
 from models.ModelFile import ModelFile
 from models.ModelTags import ModelTags
-from models.ModelPostTags import ModelPostTags
+from models.ModelTagsInPost import ModelTagsInPost
 
 from controllers.ControllerTags import ControllerTags
 from controllers.ControllerDatabase import ControllerDatabase

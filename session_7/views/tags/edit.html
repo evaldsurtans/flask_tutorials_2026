@@ -1,0 +1,28 @@
+{% extends "layouts/base.html"%}
+
+{% block title %}
+Edit {{tag.tag_name}} tag
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full items-center justify-center mt-30">
+    <div class="card w-96 bg-base-100 card-xl shadow-sm">
+        <div class="card-body">
+
+            <h2 class="card-title">Edit tag</h2>
+
+            <hr class="rounded-xl">
+            <form class="flex flex-col" action="{{ url_for('tags.edit_tags', tag_id=tag.tag_id) }}" method="POST" enctype="multipart/form-data">
+                <label for="title" class="font-semibold opacity-80">Tag name</label>
+                <input name="tag_title" id="title" type="text" placeholder="Title" class="input input-secondary" value="{{tag.tag_name}}"/>
+
+                <input class="btn btn-soft btn-secondary capitalize mt-4" type="submit" name="button_type" value="save"/>
+                <input class="btn btn-soft btn-error capitalize mt-1" type="submit" name="button_type" value="delete" />
+            </form>
+        </div>
+    </div>
+    <a class="btn btn-primary mt-4" href="/">Cancel</a>
+</div>
+
+{% endblock %}
