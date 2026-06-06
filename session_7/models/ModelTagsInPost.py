@@ -10,7 +10,7 @@ class ModelTagsInPost(Base):
 
     post_id: Mapped[int] = mapped_column(ForeignKey("posts.post_id"))
     tag_id: Mapped[int] = mapped_column(ForeignKey("tags.tag_id"))
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tags_in_post_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     posts: Mapped["ModelPost"] = relationship(back_populates="post_tags")
     tags: Mapped["ModelTags"] = relationship(back_populates="post_tags")

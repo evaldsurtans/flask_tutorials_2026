@@ -13,6 +13,8 @@ from models.ModelTags import ModelTags
 from models.ModelUsers import ModelUser
 from models.ModelTagsInPost import ModelTagsInPost
 
+from flask import url_for
+
 class ControllerDatabase:
 
     @staticmethod
@@ -95,13 +97,14 @@ class ControllerDatabase:
             post_query = select(ModelPost).where(ModelPost.url_slug == url_slug)
         post = db.session.scalar(post_query)
 
-        files_query = select(ModelFile).where(ModelFile.post_id == post.post_id)
-        files = db.session.scalars(files_query)
+        if post:
+            #files_query = select(ModelFile).where(ModelFile.post_id == post.post_id)
+            #files = db.session.scalars(files_query)
 
-        if post.parent_post_id:
-            post.parent_post = ControllerDatabase.get_post(post_id=post.parent_post_id)
+            if post.parent_post_id:
+                post.parent_post = ControllerDatabase.get_post(post_id=post.parent_post_id)
 
-        post.children_posts = ControllerDatabase.get_all_posts(parent_post_id=post.post_id)
+            post.children_posts = ControllerDatabase.get_all_posts(parent_post_id=post.post_id)
 
         return post
 
@@ -158,7 +161,7 @@ class ControllerDatabase:
                                                      ModelSession.is_active == True)
             token : ModelSession = db.session.scalar(token_query)
 
-            if token.expires_at < datetime.now():
+            if token and token.expires_at < datetime.now():
                 token.is_active = False
                 db.session.merge(token)
                 return verified
@@ -198,7 +201,7 @@ class ControllerDatabase:
         return False
 
     @staticmethod
-    def get_all_tags(query_filter : str = None, query_tab : str = None) -> list:
+    def get_all_tags(query_filter : str = None, query_tab : str = None):
         with db.session.begin():
             tags_query = select(ModelTags).limit(20)
             if query_filter:
@@ -206,7 +209,13 @@ class ControllerDatabase:
                 print("has")
 
             tags = db.session.scalars(tags_query)
-            return tags
+
+            serialized_tags = [
+                {"tag_id": tag.tag_id, "tag_name": tag.tag_name, "tag_url": url_for('tags.edit_tags', tag_id=tag.tag_id), "created": tag.created}
+                for tag in tags
+            ]
+
+            return serialized_tags
 
     @staticmethod
     def get_tag(tag_id : int = None) -> ModelTags:

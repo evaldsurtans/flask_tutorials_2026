@@ -53,9 +53,12 @@ class ControllerPosts: #flask middleware
                     flash("Post failed to delete")
                 return redirect('/')
 
-            post.title = request.form.get('post_title').strip()
-            post.body = request.form.get('post_body').strip()
-            post.url_slug = request.form.get('url_slug').strip()
+            post.title = request.form.get('post_title')
+            post.body = request.form.get('post_body')
+            post.url_slug = request.form.get('url_slug')
+
+            post.url_slug, post.title, post.body = map(lambda x: x.strip(), [post.url_slug, post.title, post.body])
+
             tags = request.form.getlist('tag')
 
             if post.url_slug == "" or post.url_slug is None:  # temporary fix

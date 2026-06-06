@@ -1,0 +1,41 @@
+{% extends "layouts/base.html"%}
+
+{% block title %}
+{{"Tags"}}
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col w-full items-center justify-center mt-30">
+    <label class="input input-primary">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Filter by tag name" oninput="searchTags(this)"/>
+    </label>
+
+    <!--how do I fix this? how to avoid using style-->
+    <div class="flex flex-wrap justify-center w-full mt-20" style="gap: 1rem;:" id="results-container">
+        {% include 'tags/tag_cards.html' %}
+    </div>
+</div>
+
+<script>
+    const api = axios.create({
+            baseURL: "{{url_for('tags.view_tags')}}" //hardcoded, use async (.then)
+        });
+
+    function searchTags(input) {
+        const container = document.getElementById("results-container");
+
+        api.get("/search", {
+            params: {
+                filter: input.value,
+            },
+        })
+        .then((response) => {
+            container.innerHTML = response.data;
+        })
+    } // issaukt /search, iegut json ar tags info, combine tag_cards and tags with react/js, create new page and leave as example
+
+</script>
+
+{% endblock %}
